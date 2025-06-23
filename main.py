@@ -51,4 +51,23 @@ class Game:
         # self.map.draw()
         # self.player.draw()
         
-    
+    def check_events(self):
+        self.global_trigger = False
+        for event in pg.event.get():
+            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                pg.quit()
+                sys.exit()
+            elif event.type == self.global_event:
+                self.global_trigger = True
+            self.player.single_fire_event(event)
+
+    def run(self):
+        while True:
+            self.check_events()
+            self.update()
+            self.draw()
+
+
+if __name__ == '__main__':
+    game = Game()
+    game.run()
