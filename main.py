@@ -35,4 +35,20 @@ class Game:
         self.pathfinding = PathFinding(self)
         pg.mixer.music.play(-1)
         
+    def update(self):
+        self.player.update()
+        self.raycasting.update()
+        self.object_handler.update()
+        self.weapon.update()
+        pg.display.flip()
+        self.delta_time = self.clock.tick(FPS)
+        pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
+        
+    def draw(self):
+        # self.screen.fill('black')
+        self.object_renderer.draw()
+        self.weapon.draw()
+        # self.map.draw()
+        # self.player.draw()
+        
     
