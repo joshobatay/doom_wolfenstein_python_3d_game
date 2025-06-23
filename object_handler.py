@@ -55,3 +55,18 @@ class ObjectHandler:
         # add_npc(CacoDemonNPC(game, pos=(5.5, 14.5)))
         # add_npc(CacoDemonNPC(game, pos=(5.5, 16.5)))
         # add_npc(CyberDemonNPC(game, pos=(14.5, 25.5)))
+
+    def spawn_npc(self):
+        for i in range(self.enemies):
+                npc = choices(self.npc_types, self.weights)[0]
+                pos = x, y = randrange(self.game.map.cols), randrange(self.game.map.rows)
+                while (pos in self.game.map.world_map) or (pos in self.restricted_area):
+                    pos = x, y = randrange(self.game.map.cols), randrange(self.game.map.rows)
+                self.add_npc(npc(self.game, pos=(x + 0.5, y + 0.5)))
+
+    def check_win(self):
+        if not len(self.npc_positions):
+            self.game.object_renderer.win()
+            pg.display.flip()
+            pg.time.delay(1500)
+            self.game.new_game()
