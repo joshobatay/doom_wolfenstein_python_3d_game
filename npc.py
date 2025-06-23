@@ -38,3 +38,27 @@ class NPC(AnimatedSprite):
             self.x += dx
         if self.check_wall(int(self.x), int(self.y + dy * self.size)):
             self.y += dy
+            
+    def movement(self):
+        next_pos = self.game.pathfinding.get_path(self.map_pos, self.game.player.map_pos)
+        next_x, next_y = next_pos
+
+        # pg.draw.rect(self.game.screen, 'blue', (100 * next_x, 100 * next_y, 100, 100))
+        if next_pos not in self.game.object_handler.npc_positions:
+            angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
+            dx = math.cos(angle) * self.speed
+            dy = math.sin(angle) * self.speed
+            self.check_wall_collision(dx, dy)
+
+    def attack(self):
+        if self.animation_trigger:
+            self.game.sound.npc_shot.play()
+            if random() < self.accuracy:
+                self.game.player.get_damage(self.attack_damage)
+
+    def animate_death(self):
+        if not self.alive:
+            if self.game.global_trigger and self.frame_counter < len(self.death_images) - 1:
+                self.death_images.rotate(-1)
+                self.image = self.death_images[0]
+                self.frame_counter += 1
