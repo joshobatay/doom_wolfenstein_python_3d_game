@@ -62,3 +62,53 @@ class NPC(AnimatedSprite):
                 self.death_images.rotate(-1)
                 self.image = self.death_images[0]
                 self.frame_counter += 1
+
+    def animate_pain(self):
+        self.animate(self.pain_images)
+        if self.animation_trigger:
+            self.pain = False
+
+    def check_hit_in_npc(self):
+        if self.ray_cast_value and self.game.player.shot:
+            if HALF_WIDTH - self.sprite_half_width < self.screen_x < HALF_WIDTH + self.sprite_half_width:
+                self.game.sound.npc_pain.play()
+                self.game.player.shot = False
+                self.pain = True
+                self.health -= self.game.weapon.damage
+                self.check_health()
+
+    def check_health(self):
+        if self.health < 1:
+            self.alive = False
+            self.game.sound.npc_death.play()
+
+    def run_logic(self):
+        if self.alive:
+            self.ray_cast_value = self.ray_cast_player_npc()
+            self.check_hit_in_npc()
+
+            if self.pain:
+                self.animate_pain()
+
+            elif self.ray_cast_value:
+                self.player_search_trigger = True
+
+                if self.dist < self.attack_dist:
+                    self.animate(self.attack_images)
+                    self.attack()
+                else:
+                    self.animate(self.walk_images)
+                    self.movement()
+
+            elif self.player_search_trigger:
+                self.animate(self.walk_images)
+                self.movement()
+
+            else:
+                self.animate(self.idle_images)
+        else:
+            self.animate_death()
+
+    @property
+    def map_pos(self):
+        return int(self.x), int(self.y)
