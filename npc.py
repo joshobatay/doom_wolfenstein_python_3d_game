@@ -24,4 +24,17 @@ class NPC(AnimatedSprite):
         self.frame_counter = 0
         self.player_search_trigger = False
         
-    
+    def update(self):
+        self.check_animation_time()
+        self.get_sprite()
+        self.run_logic()
+        # self.draw_ray_cast()
+
+    def check_wall(self, x, y):
+        return (x, y) not in self.game.map.world_map
+
+    def check_wall_collision(self, dx, dy):
+        if self.check_wall(int(self.x + dx * self.size), int(self.y)):
+            self.x += dx
+        if self.check_wall(int(self.x), int(self.y + dy * self.size)):
+            self.y += dy
